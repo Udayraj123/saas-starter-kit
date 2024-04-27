@@ -38,7 +38,7 @@ const handleGET = async (req: NextApiRequest, res: NextApiResponse) => {
     },
   });
 
-  sessions.map(
+  sessions.forEach(
     (session) => (session['isCurrent'] = session.sessionToken === sessionToken)
   );
 

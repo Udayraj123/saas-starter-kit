@@ -13,6 +13,11 @@ enum Role {
   MEMBER
 }
 
+enum UsageType {
+  IMAGE_TOKENS
+  OTHERS
+}
+
 model Account {
   id                String  @id @default(uuid())
   userId            String
@@ -30,7 +35,6 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
-
   @@index([userId])
 }
 
@@ -132,14 +136,16 @@ model PasswordReset {
 }
 
 model ApiKey {
-  id         String    @id @default(uuid())
-  name       String
-  teamId     String
-  hashedKey  String    @unique
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @default(now())
-  expiresAt  DateTime?
-  lastUsedAt DateTime?
+  id              String    @id @default(uuid())
+  hashedKey       String    @unique
+  name            String
+  teamId          String
+  type            UsageType @default(IMAGE_TOKENS)
+  availableTokens Int?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @default(now())
+  expiresAt       DateTime?
+  lastUsedAt      DateTime?
 
   team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
 

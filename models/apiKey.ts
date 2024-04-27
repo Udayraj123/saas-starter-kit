@@ -1,20 +1,9 @@
 import { prisma } from '@/lib/prisma';
-import { createHash, randomBytes } from 'crypto';
-
+import { generateUniqueApiKey } from './utils/hash';
 interface CreateApiKeyParams {
   name: string;
   teamId: string;
 }
-
-const hashApiKey = (apiKey: string) => {
-  return createHash('sha256').update(apiKey).digest('hex');
-};
-
-const generateUniqueApiKey = () => {
-  const apiKey = randomBytes(16).toString('hex');
-
-  return [hashApiKey(apiKey), apiKey];
-};
 
 export const createApiKey = async (params: CreateApiKeyParams) => {
   const { name, teamId } = params;
@@ -54,6 +43,7 @@ export const deleteApiKey = async (id: string) => {
 };
 
 export const getApiKey = async (apiKey: string) => {
+  // TODO: add access validation here based on user's teamId or admin role
   return prisma.apiKey.findUnique({
     where: {
       hashedKey: hashApiKey(apiKey),
@@ -61,6 +51,7 @@ export const getApiKey = async (apiKey: string) => {
     select: {
       id: true,
       teamId: true,
+      // availableTokens: true,
     },
   });
 };

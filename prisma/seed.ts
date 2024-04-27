@@ -2,7 +2,18 @@ const { faker } = require('@faker-js/faker');
 const { PrismaClient } = require('@prisma/client');
 const client = new PrismaClient();
 const { hash } = require('bcryptjs');
-const { randomUUID } = require('crypto');
+const { randomUUID, createHash, randomBytes } = require('crypto');
+
+// Taken from models/utils/hash.ts
+const hashApiKey = (apiKey: string) => {
+  return createHash('sha256').update(apiKey).digest('hex');
+};
+
+const generateUniqueApiKey = () => {
+  const apiKey = randomBytes(16).toString('hex');
+
+  return [hashApiKey(apiKey), apiKey];
+};
 
 let USER_COUNT = 10;
 const TEAM_COUNT = 5;
@@ -85,6 +96,44 @@ async function seedTeams() {
   }
 }
 
+async function seedApiKeysForTestUserTeams() {
+  const testUser = await client.user.findFirst({
+    where: { email: USER_EMAIL },
+    select: {
+      id: true,
+      email: true,
+      teamMembers: {
+        select: {
+          teamId: true,
+          role: true,
+        },
+      },
+    },
+  });
+  console.log({ testUser });
+  const newApiKeys: any[] = [];
+  testUser.teamMembers.forEach((teamMember, teamIndex) => {
+    const [hashedKey, apiKey] = generateUniqueApiKey();
+    const name = `${teamMember.role}-license-${teamIndex + 1}`;
+
+    newApiKeys.push({
+      name,
+      hashedKey,
+      teamId: teamMember.teamId,
+      availableTokens: 10,
+      // team: { connect: { id: teamId } }, // createMany doesn't seem to support connect
+    });
+
+    // Log apiKey so that we can use it for testing if we want to
+    console.log(name, apiKey);
+  });
+
+  await client.apiKey.createMany({
+    data: newApiKeys,
+  });
+  console.log('Seeded api keys', newApiKeys.length);
+}
+
 async function seedTeamMembers(users: any[], teams: any[]) {
   const newTeamMembers: any[] = [];
   const roles = ['OWNER', 'MEMBER'];
@@ -154,6 +203,7 @@ async function init() {
   const users = await seedUsers();
   const teams = await seedTeams();
   await seedTeamMembers(users, teams);
+  await seedApiKeysForTestUserTeams();
   await seedInvitations(teams, users);
 }
 
