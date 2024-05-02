@@ -118,6 +118,10 @@ const env = {
     secretKey: process.env.STRIPE_SECRET_KEY,
     webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
   },
+
+  usageProtection: {
+    secret: `${process.env.FROZEN_TWO_FACTOR_SECRET}`,
+  },
 };
 
 export default env;

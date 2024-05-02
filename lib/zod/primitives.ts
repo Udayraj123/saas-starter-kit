@@ -122,6 +122,13 @@ export const token = z
   })
   .min(1, 'Token is required');
 
+export const otp = z
+  .string({
+    required_error: 'OTP is required',
+    invalid_type_error: 'OTP must be a string',
+  })
+  .length(6, 'OTP must have 6 characters');
+
 export const role = z.nativeEnum(Role, {
   required_error: 'Role is required',
   invalid_type_error: 'Role must be a string',

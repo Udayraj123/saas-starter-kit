@@ -8,6 +8,7 @@ import {
   email,
   password,
   token,
+  otp,
   role,
   sentViaEmail,
   domains,
@@ -43,6 +44,16 @@ export const updateTeamSchema = z.object({
   name: teamName,
   slug: slug.transform((slug) => slugify(slug)),
   domain,
+});
+
+export const getProtectedApiUsageSchema = z.object({
+  // Note: apiKeyId is consumed via headers
+});
+
+export const updateProtectedApiUsageSchema = z.object({
+  // apiKeyId,
+  // Note: otp not needed now since we're encrypting the body with it
+  quantity,
 });
 
 export const createTeamSchema = z.object({

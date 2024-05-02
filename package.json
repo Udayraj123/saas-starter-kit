@@ -52,6 +52,8 @@
     "next-i18next": "13.3.0",
     "nodemailer": "6.9.13",
     "react": "18.3.1",
+    "otplib": "12.0.1",
+    "random-bytes-seed": "1.0.3",
     "react-daisyui": "5.0.0",
     "react-dom": "18.3.1",
     "react-email": "2.1.2",

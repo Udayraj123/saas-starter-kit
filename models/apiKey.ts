@@ -4,6 +4,10 @@ interface CreateApiKeyParams {
   name: string;
   teamId: string;
 }
+interface UpdateApiKeyParams {
+  apiKey: string;
+  availableTokens: number;
+}
 
 export const createApiKey = async (params: CreateApiKeyParams) => {
   const { name, teamId } = params;
@@ -14,6 +18,8 @@ export const createApiKey = async (params: CreateApiKeyParams) => {
     data: {
       name,
       hashedKey: hashedKey,
+      availableTokens: 0,
+      // type: "IMAGE_TOKENS",
       team: { connect: { id: teamId } },
     },
   });
@@ -35,7 +41,7 @@ export const fetchApiKeys = async (teamId: string) => {
 };
 
 export const deleteApiKey = async (id: string) => {
-  return prisma.apiKey.delete({
+  return await prisma.apiKey.delete({
     where: {
       id,
     },
@@ -43,7 +49,7 @@ export const deleteApiKey = async (id: string) => {
 };
 
 export const getApiKey = async (apiKey: string) => {
-  // TODO: add access validation here based on user's teamId or admin role
+  // Note: access validations for user's teamId or admin role are done at handleGET level
   return prisma.apiKey.findUnique({
     where: {
       hashedKey: hashApiKey(apiKey),
@@ -52,6 +58,36 @@ export const getApiKey = async (apiKey: string) => {
       id: true,
       teamId: true,
       // availableTokens: true,
+    },
+  });
+};
+
+export const getApiKeyUsage = async (apiKey: string) => {
+  return prisma.apiKey.findUnique({
+    where: {
+      hashedKey: hashApiKey(apiKey),
+    },
+    select: {
+      id: true,
+      teamId: true,
+      availableTokens: true,
+      type: true,
+      expiresAt: true,
+    },
+  });
+};
+
+// TODO: support for regenerateApiKey (with same usage/id)
+
+export const updateApiKeyUsage = async (params: UpdateApiKeyParams) => {
+  const { apiKey, availableTokens } = params;
+
+  return await prisma.apiKey.update({
+    where: {
+      hashedKey: hashApiKey(apiKey),
+    },
+    data: {
+      availableTokens,
     },
   });
 };

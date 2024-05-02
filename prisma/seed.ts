@@ -114,18 +114,17 @@ async function seedApiKeysForTestUserTeams() {
   const newApiKeys: any[] = [];
   testUser.teamMembers.forEach((teamMember, teamIndex) => {
     const [hashedKey, apiKey] = generateUniqueApiKey();
-    const name = `${teamMember.role}-license-${teamIndex + 1}`;
+    const name = `${teamMember.role}-license-${teamIndex+1}`;
 
     newApiKeys.push({
       name,
       hashedKey,
       teamId: teamMember.teamId,
-      availableTokens: 10,
       // team: { connect: { id: teamId } }, // createMany doesn't seem to support connect
     });
 
     // Log apiKey so that we can use it for testing if we want to
-    console.log(name, apiKey);
+    console.log({ name, apiKey });
   });
 
   await client.apiKey.createMany({
