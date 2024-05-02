@@ -5,8 +5,6 @@
 // 4. Encrypt the response and return it back
 // As usual, any db access would be through functions defined in `models/`
 
-import { getCurrentUserWithTeam, throwIfNoTeamAccess } from 'models/team';
-import { throwIfNotAllowed } from 'models/user';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { updateProtectedApiUsageSchema, validateWithSchema } from '@/lib/zod';
 import { claimUsage } from '@/lib/usage/claimUsage';
@@ -18,7 +16,6 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    await throwIfNoTeamAccess(req, res);
 
     switch (req.method) {
       case 'POST':
@@ -40,10 +37,6 @@ export default async function handler(
 
 // Update usage
 const handlePOST = async (req: NextApiRequest, res: NextApiResponse) => {
-  const user = await getCurrentUserWithTeam(req, res);
-
-  // TODO: update this check if necessary
-  throwIfNotAllowed(user, 'team', 'update');
 
   let responseBody: any = null;
   try {
@@ -72,7 +65,7 @@ const handlePOST = async (req: NextApiRequest, res: NextApiResponse) => {
   //   user,
   //   usage: user.usage,
   // });
-  // TODO update `lastUsedAt` too in case of claimTokenSlot
+  // TODO update `lastUsedAt` too in case of claimUsage
 
   // recordMetric('usage.updated');
 

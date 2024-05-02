@@ -124,7 +124,7 @@ export const getCurrentUser = async (
   const session = await getSession(req, res);
 
   if (!session) {
-    throw new Error('Unauthorized');
+    throw new Error('Unauthorized user');
   }
 
   return session.user;

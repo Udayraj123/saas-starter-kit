@@ -1,6 +1,6 @@
 
 import { createHash, randomBytes } from 'crypto';
-const hashApiKey = (apiKey: string) => {
+export const hashApiKey = (apiKey: string) => {
   return createHash('sha256').update(apiKey).digest('hex');
 };
 

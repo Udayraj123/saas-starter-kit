@@ -1,5 +1,3 @@
-import { getCurrentUserWithTeam, throwIfNoTeamAccess } from 'models/team';
-import { throwIfNotAllowed } from 'models/user';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getProtectedApiUsageSchema, validateWithSchema } from '@/lib/zod';
 import { readUsage } from '@/lib/usage/readUsage';
@@ -11,8 +9,6 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    await throwIfNoTeamAccess(req, res);
-
     switch (req.method) {
       case 'POST':
         await handlePOST(req, res);
@@ -33,15 +29,11 @@ export default async function handler(
 
 // Update usage
 const handlePOST = async (req: NextApiRequest, res: NextApiResponse) => {
-  const user = await getCurrentUserWithTeam(req, res);
-
-  // TODO: update this check if necessary
-  throwIfNotAllowed(user, 'team', 'update');
-
   let responseBody: any = null;
   try {
     const decryptedBody = decryptBody(req.body);
     validateWithSchema(getProtectedApiUsageSchema, decryptedBody);
+    console.log({ decryptedBody });
     responseBody = await readUsage(req.headers);
   } catch (error: any) {
     if (error instanceof ApiKeyUsageError) {

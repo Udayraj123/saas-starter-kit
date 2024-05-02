@@ -18,6 +18,7 @@ export const encryptBody = (body) => {
   const randomBytes = seed(otp);
   const key = randomBytes(32);
   const iv = randomBytes(16);
+  console.log({ otp, body, key });
   const bodyText = JSON.stringify(body);
   return encryptUtil(bodyText, key, iv);
 };
@@ -37,9 +38,11 @@ export const decryptBody = (body) => {
   const randomBytes = seed(otp);
   const key = randomBytes(32);
   try {
+    console.log({ otp, body, key });
     const bodyText = decryptUtil(body, key);
     return JSON.parse(bodyText);
   } catch (e) {
+    console.error(e)
     throw new ApiKeyUsageError(INVALID_API_KEY_2FA);
   }
 };

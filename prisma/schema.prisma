@@ -144,6 +144,7 @@ model ApiKey {
   updatedAt       DateTime  @default(now())
   // Note: these columns will have restricted access in a separate api (i.e. should not use select * in any query)
   type            UsageType @default(IMAGE_TOKENS)
+  // TODO: remove the default 0 for this and take input from server logic
   availableTokens Int       @default(0)
   lastUsedAt      DateTime?
   // TODO: make this a required column(update server logic to generate this value)

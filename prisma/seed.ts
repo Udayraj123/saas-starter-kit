@@ -97,8 +97,8 @@ async function seedTeams() {
 }
 
 async function seedApiKeysForTestUserTeams() {
-  const testUser = await client.user.findFirst({
-    where: { email: USER_EMAIL },
+  const adminUser = await client.user.findFirst({
+    where: { email: ADMIN_EMAIL },
     select: {
       id: true,
       email: true,
@@ -110,21 +110,23 @@ async function seedApiKeysForTestUserTeams() {
       },
     },
   });
-  console.log({ testUser });
+  console.log({ adminUser });
   const newApiKeys: any[] = [];
-  testUser.teamMembers.forEach((teamMember, teamIndex) => {
+  adminUser.teamMembers.forEach((teamMember, teamIndex) => {
     const [hashedKey, apiKey] = generateUniqueApiKey();
-    const name = `${teamMember.role}-license-${teamIndex+1}`;
-
+    const name = `${teamMember.role}-license-${teamIndex + 1}`;
+    const availableTokens = Math.floor(Math.random() * 1000);
     newApiKeys.push({
       name,
       hashedKey,
+      type: 'IMAGE_TOKENS',
+      availableTokens,
       teamId: teamMember.teamId,
       // team: { connect: { id: teamId } }, // createMany doesn't seem to support connect
     });
 
     // Log apiKey so that we can use it for testing if we want to
-    console.log({ name, apiKey });
+    console.log({ name, apiKey, availableTokens });
   });
 
   await client.apiKey.createMany({

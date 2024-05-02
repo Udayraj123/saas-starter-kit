@@ -10,4 +10,4 @@ export const API_RESPONSE_MESSAGES = {
   INSUFFICIENT_TOKENS_LEFT: 'Insufficient tokens left',
   SERVER_UNREACHABLE: 'Server unreachable. Please contact your administrator',
 };
-export const X_OMR_LICENSE_KEY_HEADER = 'X-OMR-License-Key';
+export const X_OMR_LICENSE_KEY_HEADER = 'x-omr-license-key';

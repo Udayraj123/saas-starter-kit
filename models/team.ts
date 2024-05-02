@@ -325,7 +325,7 @@ export const throwIfNoTeamAccess = async (
   const session = await getSession(req, res);
 
   if (!session) {
-    throw new Error('Unauthorized');
+    throw new Error('Unauthorized session');
   }
 
   const { slug } = validateWithSchema(teamSlugSchema, req.query);

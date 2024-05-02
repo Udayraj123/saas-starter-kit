@@ -5,19 +5,19 @@ const { INSUFFICIENT_TOKENS_LEFT, CLAIM_SUCCESSFUL } = API_RESPONSE_MESSAGES;
 export const claimUsage = async (headers, parsedBody) => {
   const {
     apiKey,
-    apiKeyUsage: { availableTokens },
+    apiKeyUsage: { availableTokens, name },
   } = await extractApiKeyUsage(headers);
 
-  const { size } = parsedBody;
+  const { quantity } = parsedBody;
 
   // TODO: see why availableTokens is possibly null!
-  if (!availableTokens || availableTokens < size) {
+  if (!availableTokens || availableTokens < quantity) {
     throw new Error(INSUFFICIENT_TOKENS_LEFT);
   }
   // TODO: fire lago events here
-  await updateApiKeyUsage({ apiKey, availableTokens: availableTokens - size });
+  await updateApiKeyUsage({ apiKey, availableTokens: availableTokens - quantity });
   return {
-    data: { availableTokens },
+    data: { availableTokens, name },
     success: true,
     message: CLAIM_SUCCESSFUL,
     meta: {},

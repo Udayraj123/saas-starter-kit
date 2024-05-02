@@ -11,6 +11,7 @@ const unAuthenticatedRoutes = [
   '/api/health',
   '/api/auth/**',
   '/api/oauth/**',
+  '/api/protected/library/**',
   '/api/scim/v2.0/**',
   '/api/invitations/*',
   '/api/webhooks/stripe',

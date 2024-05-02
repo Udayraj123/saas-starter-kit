@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import { generateUniqueApiKey } from './utils/hash';
+import { generateUniqueApiKey, hashApiKey } from './utils/hash';
 interface CreateApiKeyParams {
   name: string;
   teamId: string;
@@ -71,6 +71,7 @@ export const getApiKeyUsage = async (apiKey: string) => {
       id: true,
       teamId: true,
       availableTokens: true,
+      name: true,
       type: true,
       expiresAt: true,
     },
@@ -81,6 +82,7 @@ export const getApiKeyUsage = async (apiKey: string) => {
 
 export const updateApiKeyUsage = async (params: UpdateApiKeyParams) => {
   const { apiKey, availableTokens } = params;
+  console.log({availableTokens, apiKey})
 
   return await prisma.apiKey.update({
     where: {
@@ -89,5 +91,13 @@ export const updateApiKeyUsage = async (params: UpdateApiKeyParams) => {
     data: {
       availableTokens,
     },
+    select:{
+      id: true,
+      teamId: true,
+      availableTokens: true,
+      name: true,
+      type: true,
+      expiresAt: true,
+    }
   });
 };
